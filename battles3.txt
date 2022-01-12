@@ -1,0 +1,11 @@
+3
+rock paper scissors 
+rock:rock ties
+rock:paper paper covers
+rock:scissors rock crushes
+paper:rock paper covers
+paper:paper ties
+paper:scissors scissors cuts
+scissors:rock rock crushes
+scissors:paper scissors cuts
+scissors:scissors ties

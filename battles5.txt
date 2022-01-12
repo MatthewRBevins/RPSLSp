@@ -1,0 +1,27 @@
+5
+rock paper scissors lizard Spock
+rock:rock ties
+rock:paper paper covers
+rock:scissors rock crushes
+rock:lizard rock crushes
+rock:Spock Spock vaporizes
+paper:rock paper covers
+paper:paper ties
+paper:scissors scissors cuts
+paper:lizard lizard eats
+paper:Spock paper disproves
+scissors:rock rock crushes
+scissors:paper scissors cuts
+scissors:scissors ties
+scissors:lizard scissors decapitates
+scissors:Spock Spock smashes
+lizard:rock rock crushes
+lizard:paper lizard eats
+lizard:scissors scissors decapitates
+lizard:lizard ties
+lizard:Spock lizard poisons
+Spock:rock Spock vaporizes
+Spock:paper paper disproves
+Spock:scissors Spock smashes
+Spock:lizard lizard poisons
+Spock:Spock ties
