@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="RPSLSp:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/RPSLSp_jar</output-path>
+    <root id="archive" name="RPSLSp.jar">
+      <element id="module-output" name="RPSLSp" />
+    </root>
+  </artifact>
+</component>
