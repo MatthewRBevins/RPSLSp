@@ -1,11 +1,6 @@
 import java.nio.file.*;
 import java.io.*;
 import java.util.*;
-// TODO:MISSING FILE ERROR
-// TODO:MISSING NUMBER OF CHOICES ERROR
-// TODO:TOO MANY CHOICES ERROR
-// TODO:NOT ENOUGH CHOICES ERROR
-// TODO:MISSING BATTLE INFO ERROR
 
 /**
  * RPSLSp is a program that allows you to play rock-paper-scissors-lizard spock against a computer.
@@ -40,7 +35,7 @@ public class RPSLSp {
     /**
      * Path to battles file
      */
-    static String filePath = "./battles5.txt";
+    static String filePath = "battles5.txt";
     /**
      * Random number generator
      */
@@ -48,7 +43,18 @@ public class RPSLSp {
     public static void main(String[] args) {
         r.setSeed(5);
         Scanner input = new Scanner(System.in).useDelimiter("\n");
-        readFile(filePath);
+        lines = readFile(filePath);
+        switch(lines[0]) {
+            case "ERROR:FILENOTFOUND":
+                while (Objects.equals(readFile(filePath)[0], "ERROR:FILENOTFOUND")) {
+                    System.out.print("File not found. Try again: ");
+                    filePath = input.next();
+                }
+                lines = readFile(filePath);
+                break;
+            case "ERROR:MISSINGCHOICES":
+                errorMessage();
+        }
         initializeArrays();
 
         //GAME CODE
@@ -74,7 +80,7 @@ public class RPSLSp {
             if (! output.contains("not valid")) {
                 System.out.print("Battle again (yes/no)? ");
                 String choice = input.next();
-                if (choice.toLowerCase().contains("n")) {
+                if (choice.toLowerCase().charAt(0) == 'n') {
                     //Print record
                     printRecord();
                     break;
@@ -163,10 +169,29 @@ public class RPSLSp {
     static void initializeArrays() {
         //Creates the choices array using the separateLine method
         choices = separateLine(lines[1]);
+        if (Math.sqrt(lines.length-2) != choices.length) {
+            System.out.println("Missing some battle information in the file.");
+            errorMessage();
+        }
+        if (choices.length < Integer.parseInt(lines[0])) {
+            System.out.println("Just FYI, there are too many choices in the file.\n");
+        }
+        if (choices.length > Integer.parseInt(lines[0])) {
+            System.out.println("There are not enough choices in the file.");
+            errorMessage();
+        }
         //Uses the findOutcomes method to fill the outcomes and verbs arrays.
         findOutcomes();
         //Initializes the record array.
         record = new int[2][choices.length];
+    }
+
+    /**
+     * Prints the file error message and ends the game.
+     */
+    static void errorMessage() {
+        System.out.println("There is an error in " + filePath + ", ending game.");
+        System.exit(1);
     }
 
     /**
@@ -188,21 +213,21 @@ public class RPSLSp {
                 linesA.add(line);
             }
             try {
-                try {
-                    Integer.parseInt(lines[0]);
-                }
-                catch(NullPointerException n) {
-                    return new String[]{"ERROR:DOESNOTEXIST"};
-                }
+                Integer.parseInt(linesA.get(0));
             }
-            catch(NumberFormatException e) {
-                System.out.println("Missing number of choices.");
-                return new String[]{"ERROR:MISSINGCHOICES"};
+            catch(Exception e) {
+                if (e.toString().contains("NumberFormatException")) {
+                    System.out.println("Missing number of choices.");
+                    return new String[]{"ERROR:MISSINGCHOICES"};
+                }
+                else {
+                    return new String[]{"ERROR:UNKNOWN"};
+                }
             }
             lines = linesA.toArray(new String[0]);
         }
         catch (IOException x) {
-            System.err.println(x);
+            return new String[]{"ERROR:FILENOTFOUND"};
         }
         return lines;
     }
@@ -215,6 +240,12 @@ public class RPSLSp {
         String[][] verbsArr = new String[choices.length][choices.length];
         for (int i = 2; i < lines.length; i++) {
             String[] s = separateLine(lines[i]);
+            if (getIndex(choices, s[0]) == -1 || getIndex(choices, s[1]) == -1 ||
+                    (getIndex(choices, s[2]) == -1 && !Objects.equals(s[2], "ties")) ||
+                    (!Objects.equals(s[2], "ties") && s.length == 3)) {
+                System.out.println("Missing some battle information in the file.");
+                errorMessage();
+            }
             //Puts the verb of the current scenario into the verbs array. The row is the player's choice and the column is the computer's choice.
             verbsArr[getIndex(choices, s[0])][getIndex(choices, s[1])] = s[s.length-1];
             //If the player wins in the current scenario, set the scenario's value in the 2D array to 0
