@@ -74,7 +74,7 @@ public class RPSLSp {
                 }
             }
             System.out.print("Choose your weapon (1-" + choices.length + "): ");
-            String weaponInput = input.next();
+            String weaponInput = input.next().replaceAll("\\s","");
             output = checkUserInput(weaponInput);
             System.out.println(output);
             if (! output.contains("not valid")) {
@@ -169,13 +169,16 @@ public class RPSLSp {
     static void initializeArrays() {
         //Creates the choices array using the separateLine method
         choices = separateLine(lines[1]);
+        //If the list of choices in the second line is missing choices
         if (Math.sqrt(lines.length-2) != choices.length) {
             System.out.println("Missing some battle information in the file.");
             errorMessage();
         }
+        //If the number of choices is too high
         if (choices.length < Integer.parseInt(lines[0])) {
             System.out.println("Just FYI, there are too many choices in the file.\n");
         }
+        //If the number of choices is too low
         if (choices.length > Integer.parseInt(lines[0])) {
             System.out.println("There are not enough choices in the file.");
             errorMessage();
@@ -215,17 +218,14 @@ public class RPSLSp {
             try {
                 Integer.parseInt(linesA.get(0));
             }
-            catch(Exception e) {
-                if (e.toString().contains("NumberFormatException")) {
-                    System.out.println("Missing number of choices.");
-                    return new String[]{"ERROR:MISSINGCHOICES"};
-                }
-                else {
-                    return new String[]{"ERROR:UNKNOWN"};
-                }
+            catch(NumberFormatException n) {
+                //If the number of choices is missing
+                System.out.println("Missing number of choices.");
+                return new String[]{"ERROR:MISSINGCHOICES"};
             }
             lines = linesA.toArray(new String[0]);
         }
+        //If the file is missing
         catch (IOException x) {
             return new String[]{"ERROR:FILENOTFOUND"};
         }
@@ -240,6 +240,7 @@ public class RPSLSp {
         String[][] verbsArr = new String[choices.length][choices.length];
         for (int i = 2; i < lines.length; i++) {
             String[] s = separateLine(lines[i]);
+            //Check if missing battle info
             if (getIndex(choices, s[0]) == -1 || getIndex(choices, s[1]) == -1 ||
                     (getIndex(choices, s[2]) == -1 && !Objects.equals(s[2], "ties")) ||
                     (!Objects.equals(s[2], "ties") && s.length == 3)) {
