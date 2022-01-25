@@ -11,7 +11,7 @@ public class RPSLSp {
     /**
      * Choices is an array of strings storing all possible weapons
      */
-    static String[] choices = new String[0];
+    static String[] choices;
     /**
      * Lines is an array of strings storing all lines in the battles txt file
      */
@@ -19,7 +19,6 @@ public class RPSLSp {
     /**
      * Outcomes is a 2D array of ints storing all possible outcomes. Rows = user's weapon (based on the weapon's index in the choices array), column = computer's weapon, and if the user wins the outcome is stored as 0, if the computer wins it is stored as 1, and if it is a tie it is stored as 2.
      */
-    static int[][] outcomes;
     /**
      * Verbs is a 2D array of strings storing the verbs used in all possible outcomes. The format is the same as the outcomes array, except the values in the array will be the verb printed depending on the outcome.
      */
@@ -56,6 +55,8 @@ public class RPSLSp {
                 errorMessage();
         }
         initializeArrays();
+        //Uses the findOutcomes method to fill the outcomes and verbs arrays.
+        int[][] outcomes = findOutcomes();
 
         //GAME CODE
         System.out.println("Welcome to " +
@@ -75,7 +76,7 @@ public class RPSLSp {
             }
             System.out.print("Choose your weapon (1-" + choices.length + "): ");
             String weaponInput = input.next().replaceAll("\\s","");
-            output = checkUserInput(weaponInput);
+            output = checkUserInput(weaponInput, outcomes);
             System.out.println(output);
             if (! output.contains("not valid")) {
                 System.out.print("Battle again (yes/no)? ");
@@ -90,7 +91,7 @@ public class RPSLSp {
 
     }
 
-    static String checkUserInput(String input) {
+    static String checkUserInput(String input, int[][] outcomes) {
         int weapon = 0;
         //checks if user's input is a number
         try {
@@ -100,7 +101,7 @@ public class RPSLSp {
             return "Input is not valid, you need to enter a number.";
         }
         if (weapon >= 1 && weapon <= choices.length)
-            return playBattle(weapon, r.nextInt(choices.length) + 1);
+            return playBattle(weapon, r.nextInt(choices.length) + 1, outcomes);
         return "Input is not valid, you need to enter a number between 1 and " + choices.length + ".";
     }
 
@@ -110,7 +111,7 @@ public class RPSLSp {
      * @param computer The computer's weapon choice.
      * @return A formatted string telling the user who won and with what weapon.
      */
-    static String playBattle(int user, int computer) {
+    static String playBattle(int user, int computer, int[][] outcomes) {
         //Update player record
         record[0][user-1]++;
         //Update computer record
@@ -183,8 +184,6 @@ public class RPSLSp {
             System.out.println("There are not enough choices in the file.");
             errorMessage();
         }
-        //Uses the findOutcomes method to fill the outcomes and verbs arrays.
-        findOutcomes();
         //Initializes the record array.
         record = new int[2][choices.length];
     }
@@ -235,7 +234,7 @@ public class RPSLSp {
     /**
      * Goes through every possible outcome and puts it in the outcomes array and the verb associated with that scenario in the verbs array.
      */
-    static void findOutcomes() {
+    static int[][] findOutcomes() {
         int[][] finalArr = new int[choices.length][choices.length];
         String[][] verbsArr = new String[choices.length][choices.length];
         for (int i = 2; i < lines.length; i++) {
@@ -263,7 +262,7 @@ public class RPSLSp {
             }
         }
         verbs = verbsArr;
-        outcomes = finalArr;
+        return finalArr;
     }
 
     /**
